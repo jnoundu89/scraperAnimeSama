@@ -2,10 +2,9 @@ import asyncio
 import random
 import warnings
 
-import requests
 import scrapling
 from scrapling import StealthyFetcher, PlayWrightFetcher, AsyncFetcher
-from seleniumbase import Driver, SB
+from seleniumbase import SB
 
 from logging_utils import LoggerManager
 
@@ -32,33 +31,6 @@ FETCHERS = {
                          "follow_redirects": True
                      })
 }
-
-FLARESOLVERR_URL = "http://localhost:8191/v1"
-
-
-async def solve_cloudflare_challenge(url: str) -> scrapling.Adaptor | None:
-    """
-    Use FlareSolverr to solve Cloudflare challenge.
-    :param url: URL to fetch
-    :return: scrapling.Adaptor | None - Response of the request
-    """
-    headers = {"Content-Type": "application/json"}
-    data = {
-        "cmd": "request.get",
-        "url": url,
-        "maxTimeout": 60000
-    }
-    try:
-        response = requests.post(FLARESOLVERR_URL, headers=headers, json=data)
-        response.raise_for_status()
-        result = response.json()
-        if result.get("status") == "ok":
-            return scrapling.Adaptor(result["solution"]["response"])
-        else:
-            o_logger.warning(f"FlareSolverr failed: {result.get('message')}")
-    except requests.RequestException as e:
-        o_logger.error(f"FlareSolverr request failed: {e}")
-    return None
 
 
 async def bypass_cloudflare_challenge(url: str) -> scrapling.Adaptor | None:
