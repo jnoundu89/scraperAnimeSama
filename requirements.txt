@@ -1,0 +1,4 @@
+pandas~=2.2.3
+scrapling~=0.2.92
+pydantic~=2.10.3
+seleniumbase~=4.36.1
